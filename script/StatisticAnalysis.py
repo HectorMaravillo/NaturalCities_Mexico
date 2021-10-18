@@ -85,7 +85,7 @@ def StatisticalAnalysis_PowerLaw (data, it, variable = "POBTOT", test = True):
     
     r_lognormal, p_lognormal    = fit.distribution_compare('power_law', 'lognormal', normalized_ratio = True)  # Perform the Likelihood Ratio Test to compare the power law fit with the lognormal distribution 
     
-    return {"xmin": fit.xmin, "alpha": fit.alpha, "sigma": fit.sigma,"k-s distance": ks_distance, "p-value": p_value, "test iterations": it,  "p-lognromal": p_lognormal, "r_lognormal": r_lognormal}
+    return {"xmin": fit.xmin, "alpha": fit.alpha-1, "sigma": fit.sigma,"k-s distance": ks_distance, "p-value": p_value, "test iterations": it,  "p-lognromal": p_lognormal, "r_lognormal": r_lognormal}
 
 def Export_Dictionary(dictionary, name_file):
     """
