@@ -17,13 +17,18 @@ from tqdm import tqdm            # Library to view process progress
 import csv                       # Library to manipulate CSV files 
 import matplotlib.pyplot as plt  # Library for graph generation 
 
+# ---------------------- #
+# DEFINE GLOBAL VARIABLES
+
+#Set number of iterations of the hypothesis test 
+it = 1
 
 # ---------------------- #
 # DEFINING FUNCTIONS
 
 def Statistical_Summary(data, variable):
     """
-    Calculates descriptive statistical measures of the size of cities 
+    Calculate descriptive statistical measures of the size of cities 
     
     Parameters:
         data            --  (DataFram) Empirical Data
@@ -32,9 +37,11 @@ def Statistical_Summary(data, variable):
     Return:
         results         -- (Dictionary) Set of statistical measures of the data 
     """
-    df = data[variable]
-    
     results                      = {}
+    results["Area"]              = data.geometry.area.sum()/(1000**2)
+    
+    df = data[variable]
+
     results["Variable"]          = variable
     results["Number_Elements"]   = len(df)
     results["Total_Population"]  = df.sum()
@@ -116,16 +123,18 @@ def VisualizationDistribution(data, color, ax, nombre, above_xmin = True):
     if above_xmin == True:
         fit.plot_ccdf(color = color, linestyle = '-', ax = ax, label = nombre)   # Graph complementary cumulative distribution function of empirical data (> = xmin) 
     else:
-        powerlaw.plot_ccdf(data, color=color, ax=ax)                             # Graph complementary cumulative distribution function of empirical data (> = xmin)  
+        powerlaw.plot_ccdf(data, color=color, ax=ax, label = nombre)                             # Graph complementary cumulative distribution function of empirical data (> = xmin)  
     fit.power_law.plot_ccdf(color = color, linestyle = 'dotted', ax = ax)        # Graph complementary cumulative distribution function of power law fit 
+
 
 # ---------------------- #
 # DATA LOAD 
 
 # Set path to data
 # (Change the path according to the location where you save the project)
-os.chdir("../output")
+os.chdir("C:\\Users\\4PF42LA_1909\\Phyton\\NaturalCities_Mexico")
 
+os.chdir("../NaturalCities_Mexico/output")
 # Load processed data of localities, natural cities and SUN2018
 localities_data          = gpd.read_file("Localities_data2020.gpkg")
 natural_cities_data      = gpd.read_file("NaturalCities_data2020.gpkg")
@@ -153,8 +162,6 @@ Export_Dictionary(sun2018_descriptive_statistics, "SUN2018_DescriptiveStatistics
 
 # ---------------------- #
 # STATISTICAL ANALYSIS OF THE POWER LAW 
-#Set number of iterations of the hypothesis test 
-it = 1
 
 #Perform power law analysis 
 localities_anlysis_powerlaw          = StatisticalAnalysis_PowerLaw(localities_data, it)
@@ -189,12 +196,17 @@ plt.savefig("CCDF_full_sample.png", bbox_inches='tight')
 
 # ---------------------- #
 # EXPORT PROCESSED GEOGRAPHIC DATA 
-# Set path to output
-# (Change the path according to the location where you save the project)
-os.chdir("..")
 
 # Create Natural City System using xmin estimation 
 natural_city_system      = natural_cities_data[natural_cities_data["POBTOT"] > naturalcities_anlysis_powerlaw["xmin"]]
+
+
+# Statistical descriptive of the Natural City System 2020 
+natural_city_system_results     = Statistical_Summary(localities_data, "POBTOT")
+Export_Dictionary(natural_city_system_results, "NCS-2020_DescriptiveStatistics")
+
+# Set path to output
+os.chdir("..")
 
 # Export data 
 natural_city_system.to_file("NaturalCitySystem.gpkg", driver='GPKG')

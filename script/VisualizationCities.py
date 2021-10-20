@@ -14,9 +14,26 @@ import matplotlib.pyplot as plt  # Library for graph generation
 
 
 # ---------------------- #
+# DEFINE GLOBAL VARIABLES
+
+# Define projection 
+# https://epsg.io/
+# EPSG = 6372   (Mexico ITRF2008)
+projection                      = 6372
+
+
+# ---------------------- #
 # DEFINING FUNCTIONS
 
 def GraphState(number_state):
+    """
+    Graph the elements of the National Urban System 2018 (SUN-2018) and 
+    the Natural City System 2020 (NCS-2020) for the selected state. 
+    
+    Parameters:
+        number_state   -   (string): Key of the selected state ("01" to "32") 
+    """
+       
     state_selected             = states_polygons[states_polygons["CVE_ENT"] == number_state]
     municipalities_selected    = municipalities_polygons[municipalities_polygons["CVE_ENT"] == number_state]
     natural_city_selected      = gpd.overlay(natural_city_system, state_selected, how = 'intersection')
@@ -27,19 +44,12 @@ def GraphState(number_state):
     fig, ax = plt.subplots(1,1, figsize = (30,30), dpi = 300)
     state_selected.boundary.plot(ax = ax, edgecolor = 'black', linewidth = 3)
     sun2018_selected.plot(ax = ax, color = 'green', alpha = 0.6, edgecolor = "darkgreen", linewidth = 5)
-    municipalities_selected.boundary.plot(ax = ax, edgecolor = 'black', linewidth = 0.3, linestyle = 'dotted')
+    municipalities_selected.boundary.plot(ax = ax, edgecolor = 'black', linewidth = 0.5, linestyle = 'dotted')
     natural_city_selected.plot(ax = ax, color = 'blue', edgecolor = "darkblue", linewidth = 5)
-    ax.axis('off')
-    plt.savefig("State_"+name_state_selected+".png", bbox_inches = 'tight')
+    #ax.axis('off')
+    #plt.savefig("State_"+name_state_selected+".png", bbox_inches = 'tight')
  
     
-# ---------------------- #
-# Define projection 
-# https://epsg.io/
-# EPSG = 6372   (Mexico ITRF2008)
-projection                      = 6372
-
-
 # ---------------------- #
 # DATA LOAD 
 # Set path to proyect
@@ -77,21 +87,15 @@ fig, ax = plt.subplots(1,1, figsize = (30,30), dpi = 300)
 states_polygons.boundary.plot(ax = ax, edgecolor = 'black', linewidth = 2)
 sun2018_grouped.plot(ax = ax, color = 'green', alpha = 0.6, edgecolor = "darkgreen", linewidth = 3)
 natural_city_system.plot(ax = ax, color = 'blue', edgecolor = "darkblue", linewidth = 2)
-ax.axis('off')
+#ax.axis('off')
 plt.savefig("Cities.png", bbox_inches = 'tight')
 
 
 # Graph  SUN-2018 and Natural City System 2020 (state level)
-#Select a state number to plot ("01" to "32")
-print(states_polygons[["CVE_ENT", "NOMGEO"]])
-GraphState("02")
-GraphState("03")
-GraphState("11")
-GraphState("13")
-GraphState("16")
-GraphState("17")
-GraphState("19")
-GraphState("20")
-GraphState("25")
-GraphState("27")
-GraphState("31")
+number_states      = ["01","02","03","04","05","06","07","08","09",
+                     "10","11","12","13","14","15","16","17","18","19",
+                     "20","21","22","23","24","25","26","27","28","29",
+                     "30","31","32"]
+
+for i in number_states:
+    GraphState(i)
