@@ -125,7 +125,7 @@ def VisualizationDistribution(data, color, ax, nombre, above_xmin = True):
     else:
         powerlaw.plot_ccdf(data, color=color, ax=ax, label = nombre)                             # Graph complementary cumulative distribution function of empirical data (> = xmin)  
     fit.power_law.plot_ccdf(color = color, linestyle = 'dotted', ax = ax)        # Graph complementary cumulative distribution function of power law fit 
-
+    
 
 # ---------------------- #
 # DATA LOAD 
@@ -183,6 +183,8 @@ VisualizationDistribution(localities_data["POBTOT"], "black", ax, "Localities")
 VisualizationDistribution(natural_cities_data["POBTOT"], "blue", ax, "Natural Cities")
 VisualizationDistribution(sun2018_data["POB_2018"], "green", ax, "SUN-2018")
 ax.legend()
+plt.xlabel('Population')
+plt.ylabel("$P(x)$")
 plt.savefig("CCDF_above_xmin.png", bbox_inches='tight')
 
 # Plot of the complementary cumulative distribution function (CCDF) 
@@ -191,6 +193,8 @@ VisualizationDistribution(localities_data["POBTOT"], "black", ax, "Localities", 
 VisualizationDistribution(natural_cities_data["POBTOT"], "blue", ax, "Natural Cities", False)
 VisualizationDistribution(sun2018_data["POB_2018"], "green", ax, "SUN-2018", False)
 ax.legend()
+plt.xlabel('Population')
+plt.ylabel("$P(x)$")
 plt.savefig("CCDF_full_sample.png", bbox_inches='tight')
 
 
@@ -198,7 +202,7 @@ plt.savefig("CCDF_full_sample.png", bbox_inches='tight')
 # EXPORT PROCESSED GEOGRAPHIC DATA 
 
 # Create Natural City System using xmin estimation 
-natural_city_system      = natural_cities_data[natural_cities_data["POBTOT"] > naturalcities_anlysis_powerlaw["xmin"]]
+natural_city_system      = natural_cities_data[natural_cities_data["POBTOT"] >= naturalcities_anlysis_powerlaw["xmin"]]
 
 
 # Statistical descriptive of the Natural City System 2020 

@@ -14,6 +14,15 @@ import os                        # Library to interacting with the operating sys
 
 
 # ---------------------- #
+# DEFINE GLOBAL VARIABLES
+
+# Define projection 
+# https://epsg.io/
+# EPSG = 6372   (Mexico ITRF2008)
+projection                      = 6372
+
+
+# ---------------------- #
 # DEFINING FUNCTIONS
 
 def CCA_by_ConvexEnvelopIntersections(data_polygons, key, projection):
@@ -43,7 +52,7 @@ def CCA_by_ConvexEnvelopIntersections(data_polygons, key, projection):
     # Create a GeoDataFrame with the centroids and key of the original data
     data_centroid                      = gpd.GeoDataFrame()
     data_centroid['geometry']          = data_polygons.centroid
-    data_convexhull.set_crs(epsg = projection, inplace = True)
+    data_centroid.set_crs(epsg = projection, inplace = True)
     data_centroid[key]                 = data_polygons[key]
     
     # Assigns the index of the grouped convex envelopes to the original data through the centroids  
@@ -64,23 +73,16 @@ def CCA_by_ConvexEnvelopIntersections(data_polygons, key, projection):
 # ---------------------- #
 # DATA LOAD 
 
-# Define projection 
-# https://epsg.io/
-# EPSG = 6372   (Mexico ITRF2008)
-projection                      = 6372
-
-
 # Set path to proyect
 # (Change the path according to the location where you save the project)
 os.chdir("C:\\Users\\4PF42LA_1909\\Phyton\\NaturalCities_Mexico")
-
 os.chdir("../NaturalCities_Mexico/data")
 
 # Load the polygons (and multipolygon) of localities in Mexico (National Geostatistical Framework 2020)
 localities_polygons             = gpd.read_file("MGN2020_Localities.gpkg")
 
 # Load the polygons and data of the National Urban System 2018
-sun2018                         = gpd.read_file("SUN2018.gpkg")
+sun2018                         = gpd.read_file("SUN2018.gpkg").to_crs(epsg = projection)
 
 # Load data from the 2020 Population and Housing Census of localities 
 localities_census2020           = pd.read_csv("CPyV2020_Localidades.csv")
@@ -104,7 +106,6 @@ del localities_polygons, localities_census2020
 
 # Assign projection 
 localities.set_crs(epsg = projection, inplace = True, allow_override=True)
-sun2018.to_crs(epsg = projection, inplace = True)
 
 # Group of cities according to SUN-2018
 sun2018["POB_2018"]             = sun2018["POB_2018"].round()
